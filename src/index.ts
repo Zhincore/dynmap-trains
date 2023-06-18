@@ -14,7 +14,8 @@ componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfi
     baseUrl: inConfig["base-url"] || "",
     worlds: Object.assign({}, DEFAULT_WORLDS, inConfig.worlds || {}),
     label: inConfig["label"] || "Trains",
-    trainWidth: inConfig["train-width"] || 3,
+    trainWidth: inConfig["train-width"] ?? 3,
+    hidden: inConfig["hidden"] ?? false,
   };
 
   // Load styles
@@ -25,10 +26,22 @@ componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfi
   const trainLayer = new TrainsTrainLayer(dynmap, config);
 
   // Orchestrate connecting
-  networkLayer.connect().then(() => trainLayer.connect());
+  const reset = () => networkLayer.connect().then(() => trainLayer.connect());
+
+  // Function for showing/hiding
+  const hide = () => dynmap.map.removeLayer(masterLayer);
+  const show = () => {
+    reset();
+    dynmap.map.addLayer(masterLayer);
+  };
 
   // Group layers and add to dynmap
   const masterLayer = new L.LayerGroup([networkLayer, trainLayer]);
-  dynmap.map.addLayer(masterLayer);
+  if (!config.hidden) show();
   dynmap.addToLayerSelector(masterLayer, config.label, 0);
+
+  // Reset on changes
+
+  $(dynmap).on("mapchanging worldchanging", hide);
+  $(dynmap).on("mapchanged worldchanged", show);
 };
