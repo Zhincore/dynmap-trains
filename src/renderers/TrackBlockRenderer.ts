@@ -1,36 +1,55 @@
 import { CurvePathData } from "@elfalem/leaflet-curve";
 import { Renderer } from "../types/Renderer";
 import { TrackBlock, TrainPoint } from "../types/APITypes";
-import { pointsToLatLng } from "../utils";
+import { pointToLatLng } from "../utils";
+import { IConfig } from "../types/IConfig";
 
-export class TrackBlockRenderer extends Renderer<TrackBlock, L.LayerGroup> {
+export class TrackBlockRenderer extends Renderer<TrackBlock, L.LayerGroup<L.LayerGroup<L.Path>>> {
   render(block: TrackBlock) {
     const group = new L.LayerGroup();
 
-    for (const segment of block.segments) {
-      const curve = L.curve(this.#generateLine(segment.path), {
-        lineCap: "butt",
-      });
-      group.addLayer(curve);
+    // point to latLng
+    const ll = (p: TrainPoint) => pointToLatLng(p, this.dynmap);
+
+    // Generate lines for the block
+    for (let i = 0; i < block.segments.length; i++) {
+      const points = block.segments[i].path;
+
+      // Generate line
+      const commands: CurvePathData = [];
+      if (points.length == 2) {
+        // Straight line
+        commands.push("M", ll(points[0]), "L", ll(points[1]));
+      } else {
+        // Bezier curve
+        commands.push("M", ll(points[0]), "C", ll(points[1]), ll(points[2]), ll(points[3]));
+      }
+
+      // Create and add subgroup
+      group.addLayer(
+        new L.LayerGroup([
+          // Shadow line
+          L.curve(commands, {
+            lineCap: "butt",
+            color: "black",
+            opacity: 0.25,
+            weight: this.config.lineShadow,
+          }),
+          // The actual line
+          L.curve(commands, {
+            lineCap: "square",
+          }),
+        ]),
+      );
     }
 
     return group;
   }
 
-  #generateLine(path: TrainPoint[]) {
-    const points = pointsToLatLng(path, this.dynmap);
-
-    const commands: CurvePathData = ["M", points.shift()!];
-    // Straight line
-    if (points.length == 1) commands.push("L", points[0]);
-    // Bezier czrve
-    else commands.push("C", ...points);
-
-    return commands;
-  }
-
-  update(block: TrackBlock, object: L.LayerGroup) {
-    const curves = object.getLayers() as L.Curve[];
+  update(block: TrackBlock, object: L.LayerGroup<L.LayerGroup<L.Path>>) {
+    const curves = object.getLayers() as L.LayerGroup<L.Path>[];
+    const lineWidth = this.dynmap.map.getZoom() * this.config.lineWidth;
+    const shadowWidth = lineWidth * this.config.lineShadow;
 
     // Figure out line color
     let color = "var(--track-free)";
@@ -40,12 +59,13 @@ export class TrackBlockRenderer extends Renderer<TrackBlock, L.LayerGroup> {
     // Update each segment curve
     for (let i = 0; i < block.segments.length; i++) {
       const segment = block.segments[i];
-      const curve = curves[i];
+      const curve = curves[i].getLayers() as L.Path[];
 
       if (segment.dimension != this.config.worlds[this.dynmap.world.name]) {
-        curve.setStyle({ stroke: false });
+        curve.map((c) => c.setStyle({ stroke: false }));
       } else {
-        curve.setStyle({ color, stroke: true });
+        curve[0].setStyle({ stroke: true, weight: shadowWidth });
+        curve[1].setStyle({ stroke: true, color, weight: lineWidth });
       }
     }
   }

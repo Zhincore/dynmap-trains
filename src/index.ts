@@ -12,11 +12,13 @@ const DEFAULT_WORLDS = {
 
 componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfig) {
   const config: IConfig = {
+    hidden: inConfig["hidden"] ?? false,
     baseUrl: inConfig["base-url"] || "",
     worlds: Object.assign({}, DEFAULT_WORLDS, inConfig.worlds || {}),
     label: inConfig["label"] || "Trains",
     trainWidth: inConfig["train-width"] ?? 3,
-    hidden: inConfig["hidden"] ?? false,
+    lineWidth: inConfig["line-width"] || 0.75,
+    lineShadow: inConfig["line-shadow"] || 2,
   };
 
   // Load styles

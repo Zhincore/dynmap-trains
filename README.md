@@ -8,7 +8,11 @@ Dynmap integration for [Create Track Map](https://modrinth.com/mod/create-track-
 - Works surprisingly good in 3D view
 - ~~Smooth transitions for moving trains~~ soon:tm:
 
-## REe
+## Requirements
+
+- [Create Track Map](https://modrinth.com/mod/create-track-map) 
+  - And it's dependencies
+- [Dynmap](https://modrinth.com/plugin/dynmap)
 
 ## Installation
 

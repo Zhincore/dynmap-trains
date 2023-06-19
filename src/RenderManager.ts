@@ -75,6 +75,11 @@ export class RenderManager extends L.LayerGroup {
     // Attach handlers
     this.#streams.blocks.onMessage(this.#createHandler("blocks"));
     this.#streams.trains.onMessage(this.#createHandler("trains"));
+
+    // Re-render line thickness on zoom
+    $(dynmap).on("zoomchanged", () => {
+      this.updateLayer("blocks");
+    });
   }
 
   #createHandler<T extends keyof APIObjects>(type: T) {
@@ -116,8 +121,12 @@ export class RenderManager extends L.LayerGroup {
   }
 
   /** Connect all streams  */
-  connect() {
-    return Promise.all(Object.values(this.#streams).map((v) => v.connect()));
+  async connect() {
+    return Promise.resolve()
+      .then(() => this.#streams.network.connect())
+      .then(() => this.#streams.blocks.connect())
+      .then(() => this.#streams.trains.connect())
+      .then(() => this.#streams.signals.connect());
   }
 
   /** Disconnect all streams */

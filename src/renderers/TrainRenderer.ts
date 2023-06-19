@@ -1,7 +1,7 @@
 import { CurvePathData } from "@elfalem/leaflet-curve";
 import { Renderer } from "../types/Renderer";
 import { Train, TrainPoint } from "../types/APITypes";
-import { addPoints, multPoints, pointsToLatLng } from "../utils";
+import { NEG_POS, addPoints, getDirectionalVector, getPerpendicularVector, multPoints, pointsToLatLng } from "../utils";
 
 export class TrainRenderer extends Renderer<Train, L.LayerGroup<L.Polygon>> {
   render(_train: Train) {
@@ -9,10 +9,21 @@ export class TrainRenderer extends Renderer<Train, L.LayerGroup<L.Polygon>> {
   }
 
   update(train: Train, object: L.LayerGroup<L.Polygon>) {
-    object.clearLayers();
+    const polygons = object.getLayers();
 
     for (let i = 0; i < train.cars.length; i++) {
       const car = train.cars[i];
+
+      // Use existing polygon or create new one
+      let polygon = polygons[i] as L.Polygon | undefined;
+      if (!polygon) {
+        polygon = new L.Polygon([], {
+          color: "var(--train-color)",
+          fillOpacity: 0.9,
+          stroke: false,
+        });
+        object.addLayer(polygon);
+      }
 
       if (
         car.leading.dimension != this.config.worlds[this.dynmap.world.name] ||
@@ -21,28 +32,16 @@ export class TrainRenderer extends Renderer<Train, L.LayerGroup<L.Polygon>> {
         continue;
 
       // Create a delta vector
-      const delta = {
-        x: car.leading.location.x - car.trailing.location.x,
-        y: car.leading.location.y - car.trailing.location.y,
-        z: car.leading.location.z - car.trailing.location.z,
-      };
-
-      // Normalize it and scale it by thickness
-      const deltaLength = Math.sqrt(delta.x ** 2 + delta.y ** 2 + delta.z ** 2);
-      const deltaFactor = 1 / (deltaLength / (this.config.trainWidth * 0.5));
-      delta.x *= deltaFactor;
-      delta.y *= deltaFactor;
-      delta.z *= deltaFactor;
+      const delta = getDirectionalVector(car.leading.location, car.trailing.location, this.config.trainWidth * 0.5);
 
       // Substract one block of height so the train doesnt float above tracks
       delta.y -= 1;
 
       // Create a perpendicular vector
-      const deltaPerp = { x: -delta.z, y: delta.y, z: delta.x };
+      const deltaPerp = getPerpendicularVector(delta);
 
       // Create negative  perpendicular vector
-      const negPoint = { x: -1, y: 1, z: -1 };
-      const negDeltaPerp = multPoints(deltaPerp, negPoint);
+      const negDeltaPerp = multPoints(deltaPerp, NEG_POS);
 
       // Create the polygon points
       const points = [
@@ -55,7 +54,7 @@ export class TrainRenderer extends Renderer<Train, L.LayerGroup<L.Polygon>> {
       // Add direction arrow
       if (!train.stopped) {
         if (train.backwards && i == train.cars.length - 1) {
-          points.splice(4, 0, addPoints(car.trailing.location, multPoints(delta, negPoint)));
+          points.splice(4, 0, addPoints(car.trailing.location, multPoints(delta, NEG_POS)));
         } else if (i == 0) {
           points.splice(1, 0, addPoints(car.leading.location, delta));
         }
@@ -63,13 +62,7 @@ export class TrainRenderer extends Renderer<Train, L.LayerGroup<L.Polygon>> {
 
       // Create the polygon
       const toLatLng = (point: TrainPoint): L.LatLng => this.dynmap.getProjection().fromLocationToLatLng(point);
-      // Create empty polygon
-      const polygon = new L.Polygon(points.map(toLatLng), {
-        color: "var(--train-color)",
-        fillOpacity: 0.9,
-        stroke: false,
-      });
-      object.addLayer(polygon);
+      polygon.setLatLngs(points.map(toLatLng));
     }
   }
 }
