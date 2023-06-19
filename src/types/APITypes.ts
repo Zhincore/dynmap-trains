@@ -1,20 +1,52 @@
-export interface BlocksResponse {
+//
+// API responses
+//
+
+export type APIResponse = BlocksAPIResponse | TrainsAPIResponse | SignalsAPIResponse;
+
+export interface BlocksAPIResponse {
   blocks: TrackBlock[];
 }
 
-export interface TrainsResponse {
+export interface TrainsAPIResponse {
   trains: Train[];
 }
 
-export interface TrackBlock {
-  id: string;
+export interface SignalsAPIResponse {
+  signals: TrainSignalRecord[];
+}
+
+//
+// Sepcific objects
+//
+
+// Singnals
+export interface TrainSignalRecord extends TrainObject, TrainLocation {
+  forward: TrainSignal;
+  reverse: TrainSignal;
+}
+
+export interface TrainSignal {
+  type: "ENTRY_SIGNAL";
+  state: "GREEN" | "YELLOW" | "RED";
+  angle: number;
+  block: string;
+}
+
+// Blocks
+export interface TrackBlock extends TrainObject {
   occupied: boolean;
   reserved: boolean;
   segments: TrackSegment[];
 }
 
-export interface Train {
-  id: string;
+export interface TrackSegment {
+  dimension: string;
+  path: TrainPoint[];
+}
+
+// Trains
+export interface Train extends TrainObject {
   name: string;
   owner: null;
   cars: TrainCar[];
@@ -28,9 +60,12 @@ export interface TrainCar {
   trailing: TrainLocation;
 }
 
-export interface TrackSegment {
-  dimension: string;
-  path: TrainPoint[];
+//
+// Common interfaces
+//
+
+export interface TrainObject {
+  id: string;
 }
 
 export interface TrainLocation {

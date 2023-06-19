@@ -1,15 +1,30 @@
-# dynmap-trains
+# DynMap Trains
 
-To install dependencies:
+Dynmap integration for [Create Track Map](https://modrinth.com/mod/create-track-map).
 
-```bash
-bun install
-```
+## Features
 
-To run:
+- Same as CTM's frontend; near-realtime updates, configurable colors, etc.
+- Works surprisingly good in 3D view
+- ~~Smooth transitions for moving trains~~ soon:tm:
 
-```bash
-bun run index.ts
-```
+## REe
 
-This project was created using `bun init` in bun v0.6.7. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+## Installation
+
+1. Drop `trains.js` into `<your server path>/dynmap/web/js/`.
+2. Add these lines in `dynmap/configuration.txt` under the `components:` section:
+    ```yaml
+    - class: org.dynmap.ClientComponent
+      type: trains
+    ```
+3. Done! But you should probably [configure it](#configuration).
+
+## Configuration
+
+// TODO
+
+## TODO
+
+[ ] **Optimise updates** - Don't re-render everything on every change
+[ ] **Document stuff**
