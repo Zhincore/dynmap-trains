@@ -1,5 +1,7 @@
 import { TrainPoint } from "./types/APITypes";
 
+export type Unarray<T extends readonly unknown[]> = T extends readonly (infer P)[] ? P : never;
+
 export function pointsToLatLng(points: TrainPoint[], dynmap: DynMap) {
   return points.map((v) => {
     const latLng: L.LatLng = dynmap.getProjection().fromLocationToLatLng(v);

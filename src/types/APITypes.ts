@@ -2,7 +2,13 @@
 // API responses
 //
 
-export type APIResponse = BlocksAPIResponse | TrainsAPIResponse | SignalsAPIResponse;
+export type APIResponse = BlocksAPIResponse | TrainsAPIResponse | SignalsAPIResponse | NetworkAPIResponse;
+
+export interface NetworkAPIResponse {
+  tracks: TrackSegment[];
+  portals: TrackPortal[];
+  stations: TrainStation[];
+}
 
 export interface BlocksAPIResponse {
   blocks: TrackBlock[];
@@ -20,7 +26,20 @@ export interface SignalsAPIResponse {
 // Sepcific objects
 //
 
-// Singnals
+// Portals
+export interface TrackPortal {
+  from: TrainLocation;
+  to: TrainLocation;
+}
+
+// Stations
+export interface TrainStation extends TrainObject, TrainLocation {
+  name: string;
+  angle: number;
+  assembling: boolean;
+}
+
+// Signals
 export interface TrainSignalRecord extends TrainObject, TrainLocation {
   forward: TrainSignal;
   reverse: TrainSignal;

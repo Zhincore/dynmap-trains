@@ -1,4 +1,4 @@
-export interface Config {
+export interface IConfig {
   baseUrl: string;
   worlds: Record<string, string>;
   label: string;
@@ -7,8 +7,8 @@ export interface Config {
 }
 
 export type InputConfig = Partial<
-  Omit<Config, "baseUrl" | "trainWidth"> & {
-    "base-url": Config["baseUrl"];
-    "train-width": Config["trainWidth"];
+  Omit<IConfig, "baseUrl" | "trainWidth"> & {
+    "base-url": IConfig["baseUrl"];
+    "train-width": IConfig["trainWidth"];
   }
 >;

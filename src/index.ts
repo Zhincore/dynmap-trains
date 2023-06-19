@@ -1,16 +1,17 @@
 import "./polyfill";
 import "@elfalem/leaflet-curve";
 import "jquery";
-import { NetworkTrainLayer } from "./layers/NetworkTrainLayer";
-import { InputConfig, Config } from "./types/Config";
-import { TrainsTrainLayer } from "./layers/TrainsTrainLayer";
+import { InputConfig, IConfig } from "./types/IConfig";
+import { RenderManager } from "./RenderManager";
 
 const DEFAULT_WORLDS = {
   world: "minecraft:overworld",
+  "DIM-1": "minecraft:the_nether",
+  DIM1: "minecraft:the_end",
 };
 
 componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfig) {
-  const config: Config = {
+  const config: IConfig = {
     baseUrl: inConfig["base-url"] || "",
     worlds: Object.assign({}, DEFAULT_WORLDS, inConfig.worlds || {}),
     label: inConfig["label"] || "Trains",
@@ -21,27 +22,17 @@ componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfi
   // Load styles
   loadcss(config.baseUrl + "/api/style.css", () => null);
 
-  // Prepare layers
-  const networkLayer = new NetworkTrainLayer(dynmap, config);
-  const trainLayer = new TrainsTrainLayer(dynmap, config);
+  // Create rendering
+  const renderer = new RenderManager(dynmap, config);
 
-  // Orchestrate connecting
-  const reset = () => networkLayer.connect().then(() => trainLayer.connect());
+  // React to map changes
+  $(dynmap).on("mapchanged worldchanged", () => renderer.rerender());
 
-  // Function for showing/hiding
-  const hide = () => dynmap.map.removeLayer(masterLayer);
-  const show = () => {
-    reset();
-    dynmap.map.addLayer(masterLayer);
-  };
+  // Connect/disconnect when shown/hidden
+  renderer.addEventListener("add", () => renderer.connect());
+  renderer.addEventListener("remove", () => renderer.disconnect());
 
-  // Group layers and add to dynmap
-  const masterLayer = new L.LayerGroup([networkLayer, trainLayer]);
-  if (!config.hidden) show();
-  dynmap.addToLayerSelector(masterLayer, config.label, 0);
-
-  // Reset on changes
-
-  $(dynmap).on("mapchanging worldchanging", hide);
-  $(dynmap).on("mapchanged worldchanged", show);
+  // Add to dynmap
+  if (!config.hidden) dynmap.map.addLayer(renderer);
+  dynmap.addToLayerSelector(renderer, config.label, 0);
 };
