@@ -1,15 +1,9 @@
-import { CurvePathData } from "@elfalem/leaflet-curve";
 import { Renderer } from "../types/Renderer";
 import { Train, TrainPoint } from "../types/APITypes";
-import {
-  NEG_POS,
-  addPoints,
-  getDirectionalVector,
-  getPerpendicularVector,
-  latLngAsPoint,
-  multPoints,
-  pointsToLatLng,
-} from "../utils";
+import { NEG_POS, addPoints, getDirectionalVector, getPerpendicularVector, multPoints } from "../utils";
+
+/** Offset the train down 1 block so the train doesn't float above the tracks */
+const TRAIN_OFFSET: TrainPoint = { x: 0, y: -1, z: 0 };
 
 export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
   render(_train: Train) {
@@ -68,33 +62,32 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
       const trailing = car.trailing.location;
 
       // Create a delta vector
-      const offset = getDirectionalVector(leading, trailing, this.config.trainWidth * 0.5);
+      const vector = getDirectionalVector(leading, trailing, 1);
 
-      // Substract one block of height so the train doesnt float above tracks
-      offset.y -= 1;
+      // Create an in-direction offset
+      const offset = multPoints(vector, 0.5);
+      const negOffset = multPoints(offset, NEG_POS);
 
-      // Create a perpendicular vector
-      const offsetPerp = getPerpendicularVector(offset);
-
-      // Create negative  perpendicular vector
+      // Create a perpendicular offset
+      const offsetPerp = multPoints(getPerpendicularVector(vector), this.config.trainWidth * 0.5);
       const negOffsetPerp = multPoints(offsetPerp, NEG_POS);
 
       // Create the polygon points
       const points = [
-        addPoints(leading, offsetPerp),
-        addPoints(leading, negOffsetPerp),
-        addPoints(trailing, negOffsetPerp),
-        addPoints(trailing, offsetPerp),
+        addPoints(leading, addPoints(offsetPerp, offset)),
+        addPoints(leading, addPoints(negOffsetPerp, offset)),
+        addPoints(trailing, addPoints(negOffsetPerp, negOffset)),
+        addPoints(trailing, addPoints(offsetPerp, negOffset)),
       ];
 
       // Add direction arrow
       let isLead = false;
       if (!train.stopped) {
         if (train.backwards && i == train.cars.length - 1) {
-          points.splice(4, 0, addPoints(trailing, multPoints(offset, NEG_POS)));
+          points.splice(3, 0, addPoints(trailing, multPoints(multPoints(vector, NEG_POS), this.config.trainWidth)));
           isLead = true;
         } else if (i == 0) {
-          points.splice(1, 0, addPoints(leading, offset));
+          points.splice(1, 0, addPoints(leading, multPoints(vector, this.config.trainWidth)));
           isLead = true;
         }
       }
@@ -106,7 +99,8 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
       // Update the shape
       const d = points
         .map((v, i) => {
-          const _v = ll(v);
+          // Apply offfset and convert to latLan
+          const _v = ll(addPoints(v, TRAIN_OFFSET));
           return `${i ? "L" : "M"} ${_v.lat},${_v.lng}`;
         })
         .join(" ");
