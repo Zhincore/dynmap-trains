@@ -23,6 +23,10 @@ export function multPoints(point1: TrainPoint, point2: TrainPoint | number): Tra
   return { x: point1.x * point2.x, y: point1.y * point2.y, z: point1.z * point2.z };
 }
 
+export function pointsEqual(point1: TrainPoint, point2: TrainPoint) {
+  return point1.x == point2.x && point1.y == point2.y && point1.z == point2.z;
+}
+
 export function getDirectionalVector(point1: TrainPoint, point2: TrainPoint, scale = 1) {
   // Create a delta vector
   const delta = {

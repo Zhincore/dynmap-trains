@@ -76,9 +76,9 @@ export class RenderManager extends L.LayerGroup {
     this.#streams.blocks.onMessage(this.#createHandler("blocks"));
     this.#streams.trains.onMessage(this.#createHandler("trains"));
 
-    // Re-render line thickness on zoom
+    // Update on zoom
     $(dynmap).on("zoomchanged", () => {
-      this.updateLayer("blocks");
+      this.update();
     });
   }
 
@@ -105,6 +105,13 @@ export class RenderManager extends L.LayerGroup {
 
       // Update it either way
       renderer.update(object, layerObj);
+    }
+  }
+
+  /** Update all layers  */
+  update() {
+    for (const key in this.#renderers) {
+      this.updateLayer(key as keyof APIObjects);
     }
   }
 

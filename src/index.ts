@@ -17,8 +17,9 @@ componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfi
     worlds: Object.assign({}, DEFAULT_WORLDS, inConfig.worlds || {}),
     label: inConfig["label"] || "Trains",
     trainWidth: inConfig["train-width"] ?? 3,
-    lineWidth: inConfig["line-width"] || 0.75,
-    lineShadow: inConfig["line-shadow"] || 2,
+    trackWidth: inConfig["track-width"] || 0.75,
+    trackOutline: inConfig["track-outline"] || 1,
+    trackSeparationOutline: inConfig["track-separation-outline"] ?? true,
   };
 
   // Load styles
