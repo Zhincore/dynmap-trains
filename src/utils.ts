@@ -14,6 +14,10 @@ export function pointsToLatLng(points: TrainPoint[], dynmap: DynMap) {
   return points.map((v) => pointToLatLng(v, dynmap));
 }
 
+export function latLngAsPoint(latLng: L.LatLng): TrainPoint {
+  return { x: latLng.lat, y: latLng.alt || 0, z: latLng.lng };
+}
+
 export function addPoints(point1: TrainPoint, point2: TrainPoint): TrainPoint {
   return { x: point1.x + point2.x, y: point1.y + point2.y, z: point1.z + point2.z };
 }

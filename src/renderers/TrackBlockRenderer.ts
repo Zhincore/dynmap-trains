@@ -17,7 +17,6 @@ export class TrackBlockRenderer extends Renderer<TrackBlock, L.LayerGroup<L.Path
       const points = segment.path;
 
       // Don't render trakcs in other dimension
-      console.log(segment.dimension, this.config.worlds[this.dynmap.world.name]);
       if (segment.dimension != this.config.worlds[this.dynmap.world.name]) continue;
 
       // Reuse last point if it matches

@@ -6,7 +6,7 @@ Dynmap integration for [Create Track Map](https://modrinth.com/mod/create-track-
 
 - Same as CTM's frontend; near-realtime updates, configurable colors, etc.
 - Works surprisingly good in 3D view
-- ~~Smooth transitions for moving trains~~ soon:tm:
+- Smoothly moving trains
 
 ## Requirements
 
