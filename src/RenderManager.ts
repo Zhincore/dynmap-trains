@@ -49,6 +49,8 @@ export class RenderManager extends L.LayerGroup {
 
   #renderers: { [Key in keyof APIObjects]: Renderer<Unarray<APIObjects[Key]>> };
 
+  #lastTrainsUpdate = 0;
+
   constructor(dynmap: DynMap, config: IConfig) {
     super();
 
@@ -75,6 +77,20 @@ export class RenderManager extends L.LayerGroup {
     // Attach handlers
     this.#streams.blocks.onMessage(this.#createHandler("blocks"));
     this.#streams.trains.onMessage(this.#createHandler("trains"));
+
+    // Measure update interval
+    this.#streams.trains.onMessage(() => {
+      const time = Date.now();
+      if (this.#lastTrainsUpdate) {
+        const delta = time - this.#lastTrainsUpdate;
+        if (delta) {
+          const weightedSum = (delta / 1000) * 0.25 + config.updateInterval * 0.75;
+
+          config.updateInterval = Math.trunc(weightedSum * 100) / 100;
+        }
+      }
+      this.#lastTrainsUpdate = time;
+    });
 
     // Update on zoom
     $(dynmap).on("zoomchanged", () => {

@@ -20,6 +20,7 @@ componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfi
     trackWidth: inConfig["track-width"] || 0.75,
     trackOutline: inConfig["track-outline"] || 1,
     trackSeparationOutline: inConfig["track-separation-outline"] ?? true,
+    updateInterval: inConfig["update-interval"] || 0.5,
   };
 
   // Load styles

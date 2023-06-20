@@ -15,14 +15,20 @@ export interface IConfig {
   trackOutline: number;
   /** Whether or not should the track outline visually separate track segments */
   trackSeparationOutline: boolean;
+  /** `watch_interval_seconds` in CTM's config */
+  updateInterval: number;
 }
 
 export type InputConfig = Partial<
-  Omit<IConfig, "baseUrl" | "trainWidth"> & {
+  Omit<
+    IConfig,
+    "baseUrl" | "trainWidth" | "trackWidth" | "trackOutline" | "trackSeparationOutline" | "updateInterval"
+  > & {
     "base-url": IConfig["baseUrl"];
     "train-width": IConfig["trainWidth"];
     "track-width": IConfig["trackWidth"];
     "track-outline": IConfig["trackOutline"];
     "track-separation-outline": IConfig["trackSeparationOutline"];
+    "update-interval": IConfig["updateInterval"];
   }
 >;

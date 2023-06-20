@@ -57,7 +57,6 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
         viewPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
         calcPath = viewPath.cloneNode() as SVGPathElement;
 
-        viewPath.style.transition = "d 0.5s linear";
         calcPath.style.opacity = "0";
 
         innerG.appendChild(viewPath);
@@ -100,6 +99,10 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
         }
       }
 
+      // Update style
+      viewPath.style.transition = `all ${Math.min(1, this.config.updateInterval)}s linear`;
+      viewPath.style.fill = isLead ? "var(--lead-car-color)" : "var(--train-color)";
+
       // Update the shape
       const d = points
         .map((v, i) => {
@@ -109,8 +112,6 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
         .join(" ");
       viewPath.setAttribute("d", d);
       calcPath.setAttribute("d", d);
-
-      viewPath.style.fill = isLead ? "var(--lead-car-color)" : "var(--train-color)";
     }
 
     // Calculate needed space and location

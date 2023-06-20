@@ -12,6 +12,7 @@ export class Stream<T extends APIResponse = APIResponse> {
     this.disconnect();
 
     this.#events = new EventSource(this.url);
+
     this.#events.onmessage = (ev) => {
       this.#onMessage(JSON.parse(ev.data));
     };
