@@ -19,15 +19,15 @@ export class Stream<T extends APIResponse = APIResponse> {
 
     return new Promise<void>((resolve, reject) => {
       const _end = () => {
-        this.#events!.removeEventListener("open", _resolve);
-        this.#events!.removeEventListener("error", _reject);
+        this.#events?.removeEventListener("open", _resolve);
+        this.#events?.removeEventListener("error", _reject);
         return true;
       };
       const _resolve = () => _end() && resolve();
       const _reject = () => _end() && reject();
 
-      this.#events!.addEventListener("open", _resolve, { once: true });
-      this.#events!.addEventListener("error", _reject, { once: true });
+      this.#events?.addEventListener("open", _resolve, { once: true });
+      this.#events?.addEventListener("error", _reject, { once: true });
     });
   }
 

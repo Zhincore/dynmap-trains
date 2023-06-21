@@ -2,7 +2,6 @@ import { CurvePathData } from "@elfalem/leaflet-curve";
 import { Renderer } from "../types/Renderer";
 import { TrackBlock, TrainPoint } from "../types/APITypes";
 import { pointToLatLng, pointsEqual } from "../utils";
-import { IConfig } from "../types/IConfig";
 
 export class TrackBlockRenderer extends Renderer<TrackBlock, L.LayerGroup<L.Path>> {
   render(block: TrackBlock) {

@@ -20,14 +20,14 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
       ],
       {
         interactive: true,
-      },
+      }
     );
 
     return object;
   }
 
   update(train: Train, object: L.SVGOverlay) {
-    const svgElement = object.getElement()!;
+    const svgElement = object.getElement() as SVGSVGElement;
     const outerG = svgElement.childNodes[0] as SVGGElement;
     const innerG = outerG.childNodes[0] as SVGGElement;
 
@@ -119,7 +119,7 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
     // Update rotation center
     outerG.setAttribute(
       "transform-origin",
-      `${innerBbox.x + innerBbox.width / 2} ${innerBbox.y + innerBbox.height / 2}`,
+      `${innerBbox.x + innerBbox.width / 2} ${innerBbox.y + innerBbox.height / 2}`
     );
 
     // Update svg location
@@ -127,7 +127,7 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
       L.latLngBounds([
         L.latLng(innerBbox.x, innerBbox.y, startLatLng.alt),
         L.latLng(innerBbox.x + innerBbox.width, innerBbox.y + innerBbox.height, startLatLng.alt),
-      ]),
+      ])
     );
   }
 }

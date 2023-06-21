@@ -1,4 +1,3 @@
-import { TrackBlockRenderer } from "./renderers/TrackBlockRenderer";
 import { IConfig } from "./types/IConfig";
 import {
   BlocksAPIResponse,
@@ -10,6 +9,7 @@ import {
 import { Renderer } from "./types/Renderer";
 import { Stream } from "./Stream";
 import { Unarray } from "./utils";
+import { TrackBlockRenderer } from "./renderers/TrackBlockRenderer";
 import { TrainRenderer } from "./renderers/TrainRenderer";
 
 type AllAPIResponse = BlocksAPIResponse & TrainsAPIResponse & SignalsAPIResponse & NetworkAPIResponse;
