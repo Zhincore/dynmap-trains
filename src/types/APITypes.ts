@@ -1,17 +1,23 @@
+export type APILayers = keyof APIObjects;
+
+export interface APIObjects extends APIIdObjects {
+  portals: TrainPortal[];
+}
+
+type AllAPIResponse = BlocksAPIResponse & TrainsAPIResponse & SignalsAPIResponse & NetworkAPIResponse;
+export type APIIdObjects = {
+  [Key in keyof AllAPIResponse as AllAPIResponse[Key] extends TrainObject[] ? Key : never]: AllAPIResponse[Key];
+};
+
 //
 // API responses
 //
-
-type AllAPIResponse = BlocksAPIResponse & TrainsAPIResponse & SignalsAPIResponse & NetworkAPIResponse;
-export type APIObjects = {
-  [Key in keyof AllAPIResponse as AllAPIResponse[Key] extends TrainObject[] ? Key : never]: AllAPIResponse[Key];
-};
 
 export type APIResponse = BlocksAPIResponse | TrainsAPIResponse | SignalsAPIResponse | NetworkAPIResponse;
 
 export interface NetworkAPIResponse {
   tracks: TrackSegment[];
-  portals: TrackPortal[];
+  portals: TrainPortal[];
   stations: TrainStation[];
 }
 
@@ -32,7 +38,7 @@ export interface SignalsAPIResponse {
 //
 
 // Portals
-export interface TrackPortal {
+export interface TrainPortal {
   from: TrainLocation;
   to: TrainLocation;
 }

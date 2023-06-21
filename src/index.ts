@@ -3,7 +3,7 @@ import "@elfalem/leaflet-curve";
 import "jquery";
 import { InputConfig, IConfig } from "./types/IConfig";
 import { RenderManager } from "./RenderManager";
-import { APIObjects } from "./types/APITypes";
+import { APILayers } from "./types/APITypes";
 
 const DEFAULT_WORLDS = {
   world: "minecraft:overworld",
@@ -11,11 +11,12 @@ const DEFAULT_WORLDS = {
   DIM1: "minecraft:the_end",
 };
 
-const DEFAULT_LABELS: Record<keyof APIObjects, string> = {
+const DEFAULT_LABELS: Record<APILayers, string> = {
   trains: "Trains",
   blocks: "Train Tracks",
   signals: "Train Signals",
   stations: "Train Stations",
+  portals: "Train Portals",
 };
 
 componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfig) {
@@ -36,6 +37,9 @@ componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfi
     trackOutline: inConfig["track-outline"] || 1,
     trackSeparationOutline: inConfig["track-separation-outline"] ?? true,
     updateInterval: inConfig["update-interval"] || 0.5,
+    labels: {
+      portal: inConfig["labels"]?.portal ?? "Portal to ",
+    },
   };
 
   // Load styles

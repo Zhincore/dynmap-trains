@@ -10,6 +10,7 @@ const SIGNAL_DIRECTIONS = ["forward", "reverse"] as const;
 export class SignalRenderer extends Renderer<TrainSignalPair, NamedLayerGroup<L.SVGOverlay>> {
   render(signalPair: TrainSignalPair) {
     const group = new NamedLayerGroup<L.SVGOverlay>();
+    if (signalPair.dimension != this.config.worlds[this.dynmap.world.name]) return group;
 
     for (const direction of SIGNAL_DIRECTIONS) {
       const signal = signalPair[direction];

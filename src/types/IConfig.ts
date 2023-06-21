@@ -14,6 +14,11 @@ export interface IConfig {
   worlds: Record<string, string>;
   /** Configuration for each layer */
   layers: Record<keyof APIObjects, ILayerConfig>;
+  /** Additional texts used in the UI */
+  labels: {
+    /** Tolltip for portal marker */
+    portal: string;
+  };
   /** Width of the rectangles representing trains (in blocks) */
   trainWidth: number;
   /** Width of the lines representing tracks */
