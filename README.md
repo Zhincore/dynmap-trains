@@ -22,7 +22,7 @@ Dynmap integration for [Create Track Map](https://modrinth.com/mod/create-track-
     - class: org.dynmap.ClientComponent
       type: trains
     ```
-3. Done! But you should probably [configure it](#configuration).
+3. Restart the server and done! But you should probably [configure it](#configuration) first.
 
 ## Configuration
 

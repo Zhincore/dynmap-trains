@@ -3,6 +3,7 @@ import "@elfalem/leaflet-curve";
 import "jquery";
 import { InputConfig, IConfig } from "./types/IConfig";
 import { RenderManager } from "./RenderManager";
+import { APIObjects } from "./types/APITypes";
 
 const DEFAULT_WORLDS = {
   world: "minecraft:overworld",
@@ -10,12 +11,26 @@ const DEFAULT_WORLDS = {
   DIM1: "minecraft:the_end",
 };
 
+const DEFAULT_LABELS: Record<keyof APIObjects, string> = {
+  trains: "Trains",
+  blocks: "Train Tracks",
+  signals: "Train Signals",
+  stations: "Train Stations",
+};
+
 componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfig) {
   const config: IConfig = {
-    hidden: inConfig["hidden"] ?? false,
     baseUrl: inConfig["base-url"] || "",
     worlds: Object.assign({}, DEFAULT_WORLDS, inConfig.worlds || {}),
-    label: inConfig["label"] || "Trains",
+    layers: Object.entries(DEFAULT_LABELS).reduce((acc, [layer, defLabel]) => {
+      const _layer = layer as keyof IConfig["layers"];
+      const conf = inConfig["layers"]?.[_layer];
+      acc[_layer] = {
+        hidden: conf?.["hidden"] ?? false,
+        label: conf?.["label"] ?? defLabel,
+      };
+      return acc;
+    }, {} as IConfig["layers"]),
     trainWidth: inConfig["train-width"] ?? 3,
     trackWidth: inConfig["track-width"] || 0.75,
     trackOutline: inConfig["track-outline"] || 1,
@@ -32,11 +47,27 @@ componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfi
   // React to map changes
   $(dynmap).on("mapchanged worldchanged", () => renderer.rerender());
 
-  // Connect/disconnect when shown/hidden
-  renderer.addEventListener("add", () => renderer.connect());
-  renderer.addEventListener("remove", () => renderer.disconnect());
+  // Connect/disconnect when some/all layers are shown/hidden
+  let shownLayers = 0;
+  const onAdd = () => {
+    shownLayers++;
+    if (shownLayers == 1) renderer.connect();
+  };
+  const onRemove = () => {
+    shownLayers--;
+    if (shownLayers == 0) renderer.disconnect();
+  };
 
-  // Add to dynmap
-  if (!config.hidden) dynmap.map.addLayer(renderer);
-  dynmap.addToLayerSelector(renderer, config.label, 0);
+  // Add all layers to dynmap
+  const layers = Object.entries(renderer.getLayers()) as [keyof IConfig["layers"], L.Layer][];
+  for (let i = 0; i < layers.length; i++) {
+    const [layerName, layer] = layers[i];
+    const layerConf = config.layers[layerName];
+
+    layer.on("add", onAdd);
+    layer.on("remove", onRemove);
+
+    if (!layerConf.hidden) dynmap.map.addLayer(layer);
+    dynmap.addToLayerSelector(layer, layerConf.label, i + 1);
+  }
 };

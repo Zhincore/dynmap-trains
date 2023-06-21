@@ -2,6 +2,11 @@
 // API responses
 //
 
+type AllAPIResponse = BlocksAPIResponse & TrainsAPIResponse & SignalsAPIResponse & NetworkAPIResponse;
+export type APIObjects = {
+  [Key in keyof AllAPIResponse as AllAPIResponse[Key] extends TrainObject[] ? Key : never]: AllAPIResponse[Key];
+};
+
 export type APIResponse = BlocksAPIResponse | TrainsAPIResponse | SignalsAPIResponse | NetworkAPIResponse;
 
 export interface NetworkAPIResponse {
@@ -19,7 +24,7 @@ export interface TrainsAPIResponse {
 }
 
 export interface SignalsAPIResponse {
-  signals: TrainSignalRecord[];
+  signals: TrainSignalPair[];
 }
 
 //
@@ -40,13 +45,13 @@ export interface TrainStation extends TrainObject, TrainLocation {
 }
 
 // Signals
-export interface TrainSignalRecord extends TrainObject, TrainLocation {
+export interface TrainSignalPair extends TrainObject, TrainLocation {
   forward: TrainSignal;
   reverse: TrainSignal;
 }
 
 export interface TrainSignal {
-  type: "ENTRY_SIGNAL";
+  type: "ENTRY_SIGNAL" | "CROSS_SIGNAL";
   state: "GREEN" | "YELLOW" | "RED";
   angle: number;
   block: string;

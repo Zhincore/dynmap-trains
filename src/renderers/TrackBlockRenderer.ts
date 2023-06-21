@@ -1,25 +1,24 @@
 import { CurvePathData } from "@elfalem/leaflet-curve";
 import { Renderer } from "../types/Renderer";
-import { TrackBlock, TrainPoint } from "../types/APITypes";
-import { pointToLatLng, pointsEqual } from "../utils";
+import { TrackBlock } from "../types/APITypes";
+import { Vector } from "../utils";
 
 export class TrackBlockRenderer extends Renderer<TrackBlock, L.LayerGroup<L.Path>> {
   render(block: TrackBlock) {
-    // point to latLng
-    const ll = (p: TrainPoint) => pointToLatLng(p, this.dynmap);
-
     const commands: CurvePathData = [];
-    let lastPoint: TrainPoint | null = null;
+    let lastPoint: Vector | null = null;
+
+    const ll = (v: Vector) => v.toLatLngArray(this.dynmap);
 
     // Generate lines for the block
     for (const segment of block.segments) {
-      const points = segment.path;
+      const points = segment.path.map((v) => new Vector(v));
 
       // Don't render trakcs in other dimension
       if (segment.dimension != this.config.worlds[this.dynmap.world.name]) continue;
 
       // Reuse last point if it matches
-      if (!lastPoint || !pointsEqual(lastPoint, points[0])) {
+      if (!lastPoint || !lastPoint.equals(points[0])) {
         // Move "pencil"
         commands.push("M", ll(points[0]));
       }

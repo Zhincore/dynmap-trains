@@ -1,12 +1,19 @@
-export interface IConfig {
-  /** Whether or not should the trains layer be hidden by default */
+import { APIObjects } from "./APITypes";
+
+interface ILayerConfig {
+  /** Whether or not should the layer be hidden by default */
   hidden: boolean;
-  /** Label to use for the trains layer. */
+  /** Label to use for the layer. */
   label: string;
+}
+
+export interface IConfig {
   /** Base url of CTM server */
   baseUrl: string;
   /** Dynmap world name to CTM world name mapping */
   worlds: Record<string, string>;
+  /** Configuration for each layer */
+  layers: Record<keyof APIObjects, ILayerConfig>;
   /** Width of the rectangles representing trains (in blocks) */
   trainWidth: number;
   /** Width of the lines representing tracks */
@@ -15,7 +22,7 @@ export interface IConfig {
   trackOutline: number;
   /** Whether or not should the track outline visually separate track segments */
   trackSeparationOutline: boolean;
-  /** `watch_interval_seconds` in CTM's config */
+  /** `watch_interval_seconds` in CTM's config. Automatically determined on runtime */
   updateInterval: number;
 }
 

@@ -1,9 +1,9 @@
 import { IConfig } from "./types/IConfig";
 import {
+  APIObjects,
   BlocksAPIResponse,
   NetworkAPIResponse,
   SignalsAPIResponse,
-  TrainObject,
   TrainsAPIResponse,
 } from "./types/APITypes";
 import { Renderer } from "./types/Renderer";
@@ -11,14 +11,9 @@ import { Stream } from "./Stream";
 import { Unarray } from "./utils";
 import { TrackBlockRenderer } from "./renderers/TrackBlockRenderer";
 import { TrainRenderer } from "./renderers/TrainRenderer";
+import { SignalRenderer } from "./renderers/SignalRenderer";
 
-type AllAPIResponse = BlocksAPIResponse & TrainsAPIResponse & SignalsAPIResponse & NetworkAPIResponse;
-
-type APIObjects = {
-  [Key in keyof AllAPIResponse as AllAPIResponse[Key] extends TrainObject[] ? Key : never]: AllAPIResponse[Key];
-};
-
-export class RenderManager extends L.LayerGroup {
+export class RenderManager {
   #streams: {
     network: Stream<NetworkAPIResponse>;
     signals: Stream<SignalsAPIResponse>;
@@ -52,13 +47,6 @@ export class RenderManager extends L.LayerGroup {
   #lastTrainsUpdate = 0;
 
   constructor(dynmap: DynMap, config: IConfig) {
-    super();
-
-    // Add own layers
-    for (const layer of Object.values(this.#layers)) {
-      this.addLayer(layer);
-    }
-
     // Create streams
     this.#streams = {
       network: new Stream(config.baseUrl + "/api/network.rt"),
@@ -70,11 +58,13 @@ export class RenderManager extends L.LayerGroup {
     // Create renderers
     //@ts-ignore TODO
     this.#renderers = {
+      signals: new SignalRenderer(dynmap, config),
       blocks: new TrackBlockRenderer(dynmap, config),
       trains: new TrainRenderer(dynmap, config),
     };
 
     // Attach handlers
+    this.#streams.signals.onMessage(this.#createHandler("signals"));
     this.#streams.blocks.onMessage(this.#createHandler("blocks"));
     this.#streams.trains.onMessage(this.#createHandler("trains"));
 
@@ -141,6 +131,10 @@ export class RenderManager extends L.LayerGroup {
 
       this.updateLayer(type);
     }
+  }
+
+  getLayers() {
+    return { ...this.#layers };
   }
 
   /** Connect all streams  */
