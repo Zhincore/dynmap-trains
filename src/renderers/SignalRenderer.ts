@@ -3,7 +3,7 @@ import { Renderer } from "../types/Renderer";
 import { Vector } from "../utils";
 import { NamedLayerGroup } from "../utils/NamedLayerGroup";
 
-const SIGNAL_SCALE = 6;
+const SIGNAL_SCALE = 5;
 const SIGNAL_DIRECTIONS = ["forward", "reverse"] as const;
 
 export class SignalRenderer extends Renderer<TrainSignalPair, NamedLayerGroup<L.SVGOverlay>> {
@@ -16,19 +16,26 @@ export class SignalRenderer extends Renderer<TrainSignalPair, NamedLayerGroup<L.
       const signal = signalPair[direction];
       if (!signal) continue;
 
+      const vector = new Vector(1, 0, 0).rotate(-signal.angle);
+
       // Calculate offset vector from the tracks
-      const offset = new Vector(direction == "forward" ? 3 : 2, 0, 0).rotate(-signal.angle);
+      const offset = vector.multiply(2).substract(vector.toPerpendicular());
 
       // Calculate the final position
       const position = new Vector(signalPair.location).add(offset);
 
+      // Calculate the angle for 3D view
+      const location = new Vector(new Vector(signalPair.location).toLatLng(this.dynmap));
+      const offsettedLoc = new Vector(new Vector(signalPair.location).add(vector).toLatLng(this.dynmap));
+      const angle3d = offsettedLoc.substract(location).getAngle();
+
       // Create the image
       const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      svgElement.setAttribute("viewBox", "-25 -25 200 200");
+      svgElement.setAttribute("viewBox", "0 0 150 150");
       svgElement.innerHTML = `
-        <g stroke="black" transform="rotate(${signal.angle})" transform-origin="50 50">
-          <circle cx="50" cy="50" r="40" stroke-width="10" style="transition: fill 0.3s" />
-          <polyline points="15,90 85,90" stroke-width="15" stroke-linecap="round" /> 
+        <g stroke="black" transform="rotate(${-angle3d})" transform-origin="75 75">
+          <circle cx="75" cy="75" r="40" stroke-width="10" style="transition: fill 0.3s" />
+          <polyline points="35,115 115,115" stroke-width="15" stroke-linecap="round" /> 
         </g>
       `;
 

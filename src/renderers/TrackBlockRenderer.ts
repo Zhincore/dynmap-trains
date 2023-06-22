@@ -64,7 +64,7 @@ export class TrackBlockRenderer extends Renderer<TrackBlock, L.LayerGroup<L.Path
     if (block.occupied) color = "var(--track-occupied)";
     else if (block.reserved) color = "var(--track-reserved)";
 
-    // Caluclate line widths
+    // Calculate line widths
     const lineWidth = this.dynmap.map.getZoom() * this.config.trackWidth;
     const shadowWidth = this.dynmap.map.getZoom() * (this.config.trackWidth + this.config.trackOutline);
 

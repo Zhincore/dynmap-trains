@@ -45,6 +45,12 @@ export class Vector implements TrainPoint {
     return Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2);
   }
 
+  /** Calculate current horizontal angle of the vector */
+  getAngle() {
+    const angle = Math.atan2(this.x, this.z);
+    return (180 * angle) / Math.PI;
+  }
+
   /** Convert this vector to a LatLng object on given Dynmap */
   toLatLng(dynmap: DynMap): L.LatLng {
     return dynmap.getProjection().fromLocationToLatLng(this);
