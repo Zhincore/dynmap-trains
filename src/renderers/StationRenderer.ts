@@ -7,7 +7,7 @@ export class StationRenderer extends Renderer<TrainStation, L.Polygon> {
     if (station.dimension != this.config.worlds[this.dynmap.world.name]) return;
 
     // Align a vector to the station
-    const vector = new Vector(-1, 0, 0).rotate(station.angle);
+    const vector = new Vector(-1, 0, 0).rotate(-station.angle);
 
     // Calculate offsets
     const sideOffset = vector.multiply(2);
@@ -18,11 +18,11 @@ export class StationRenderer extends Renderer<TrainStation, L.Polygon> {
     const location = new Vector(station.location);
 
     const points = [
-      location.add(sideOffset).add(frontOffset),
+      location.add(sideOffset.add(frontOffset)),
       location.add(frontOffset.multiply(2)),
-      location.add(sideOffsetFlipped).add(frontOffset),
-      location.add(sideOffsetFlipped).add(frontOffsetFlipped),
-      location.add(sideOffset).add(frontOffsetFlipped),
+      location.add(sideOffsetFlipped.add(frontOffset)),
+      location.add(sideOffsetFlipped.add(frontOffsetFlipped)),
+      location.add(sideOffset.add(frontOffsetFlipped)),
     ];
 
     return L.polygon(
@@ -31,6 +31,7 @@ export class StationRenderer extends Renderer<TrainStation, L.Polygon> {
         fillColor: "var(--station-color)",
         fillOpacity: 0.5,
         color: "var(--station-outline)",
+        pane: "ctm-stations",
       }
     );
   }

@@ -3,8 +3,7 @@ import { Renderer } from "../types/Renderer";
 import { Vector } from "../utils";
 import { NamedLayerGroup } from "../utils/NamedLayerGroup";
 
-const SIGNAL_OFFSET = 2;
-const SIGNAL_SCALE = 5;
+const SIGNAL_SCALE = 6;
 const SIGNAL_DIRECTIONS = ["forward", "reverse"] as const;
 
 export class SignalRenderer extends Renderer<TrainSignalPair, NamedLayerGroup<L.SVGOverlay>> {
@@ -18,15 +17,14 @@ export class SignalRenderer extends Renderer<TrainSignalPair, NamedLayerGroup<L.
       if (!signal) continue;
 
       // Calculate offset vector from the tracks
-      const offsetVector = new Vector(1, 0, 0).rotate(-signal.angle);
+      const offset = new Vector(direction == "forward" ? 3 : 2, 0, 0).rotate(-signal.angle);
 
-      // Calculate the offset itself and the final position
-      const offset = offsetVector.multiply(SIGNAL_OFFSET);
+      // Calculate the final position
       const position = new Vector(signalPair.location).add(offset);
 
       // Create the image
       const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      svgElement.setAttribute("viewBox", "-50 -50 150 150");
+      svgElement.setAttribute("viewBox", "-25 -25 200 200");
       svgElement.innerHTML = `
         <g stroke="black" transform="rotate(${signal.angle})" transform-origin="50 50">
           <circle cx="50" cy="50" r="40" stroke-width="10" style="transition: fill 0.3s" />

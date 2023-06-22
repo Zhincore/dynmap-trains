@@ -42,6 +42,10 @@ componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfi
     },
   };
 
+  // Setup layers
+  dynmap.map.createPane("ctm-stations").style.zIndex = 450;
+  dynmap.map.createPane("ctm-trains").style.zIndex = 451;
+
   // Load styles
   loadcss(config.baseUrl + "/api/style.css", () => null);
 

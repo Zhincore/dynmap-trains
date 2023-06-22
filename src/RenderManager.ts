@@ -33,11 +33,11 @@ export class RenderManager {
   };
 
   #layers: { [Key in APILayers]: L.LayerGroup } = {
-    blocks: new L.LayerGroup(),
-    signals: new L.LayerGroup(),
-    stations: new L.LayerGroup(),
-    trains: new L.LayerGroup(),
-    portals: new L.LayerGroup(),
+    blocks: L.layerGroup(),
+    signals: L.layerGroup(),
+    stations: L.layerGroup(),
+    trains: L.layerGroup(),
+    portals: L.layerGroup(),
   };
 
   #cache: APIObjects = {

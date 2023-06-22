@@ -19,6 +19,7 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
       ],
       {
         interactive: true,
+        pane: "ctm-trains",
       }
     );
 

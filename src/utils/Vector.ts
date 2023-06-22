@@ -106,8 +106,11 @@ export class Vector implements TrainPoint {
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
 
-    this.x = this.x * cos - this.z * sin;
-    this.z = this.x * sin + this.z * cos;
+    const x = this.x;
+    const z = this.z;
+
+    this.x = x * cos - z * sin;
+    this.z = x * sin + z * cos;
 
     return this;
   }
