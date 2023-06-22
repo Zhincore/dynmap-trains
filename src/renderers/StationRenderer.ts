@@ -25,7 +25,7 @@ export class StationRenderer extends Renderer<TrainStation, L.Polygon> {
       location.add(sideOffset.add(frontOffsetFlipped)),
     ];
 
-    return L.polygon(
+    const polygon = L.polygon(
       points.map((v) => v.toLatLng(this.dynmap)),
       {
         fillColor: "var(--station-color)",
@@ -34,6 +34,16 @@ export class StationRenderer extends Renderer<TrainStation, L.Polygon> {
         pane: "ctm-stations",
       }
     );
+
+    polygon.bindTooltip(
+      [
+        `<small>${this.config.labels.station}</small>`,
+        `<b>${station.name}</b>`,
+        `${this.config.labels.assembling}: ${station.assembling}`,
+      ].join("<br>")
+    );
+
+    return polygon;
   }
 
   update() {

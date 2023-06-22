@@ -45,10 +45,12 @@ export class TrackBlockRenderer extends Renderer<TrackBlock, L.LayerGroup<L.Path
         lineCap: this.config.trackSeparationOutline ? "square" : "butt",
         color: "black",
         opacity: 0.25,
+        interactive: false,
       }),
       // The actual line
       L.curve(commands, {
         lineCap: "square",
+        interactive: false,
       }),
     ]);
   }

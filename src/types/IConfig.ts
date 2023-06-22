@@ -16,8 +16,16 @@ export interface IConfig {
   layers: Record<keyof APIObjects, ILayerConfig>;
   /** Additional texts used in the UI */
   labels: {
-    /** Tolltip for portal marker */
+    /** Tooltip for portal marker */
     portal: string;
+    /** Tooltip for station marker */
+    station: string;
+    /** Tooltip whether the station is assembling */
+    assembling: string;
+    /** Tooltip for train marker */
+    train: string;
+    /** Owner of train */
+    owner: string;
   };
   /** Width of the rectangles representing trains (in blocks) */
   trainWidth: number;

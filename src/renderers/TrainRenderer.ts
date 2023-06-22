@@ -6,7 +6,7 @@ import { Vector } from "../utils";
 const TRAIN_OFFSET: TrainPoint = { x: 0, y: -1, z: 0 };
 
 export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
-  render(_train: Train) {
+  render(train: Train) {
     const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svgElement.setAttribute("viewBox", "0 0 200 200");
     svgElement.innerHTML = '<g><g transform="rotate(-90)"></g></g>';
@@ -21,6 +21,14 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
         interactive: true,
         pane: "ctm-trains",
       }
+    );
+
+    object.bindTooltip(
+      [
+        `<small>${this.config.labels.train}</small>`,
+        `<b>${train.name}</b>`,
+        train.owner ? `${this.config.labels.owner}: ${train.owner}` : "",
+      ].join("<br>")
     );
 
     return object;

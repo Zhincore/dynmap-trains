@@ -39,6 +39,10 @@ componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfi
     updateInterval: inConfig["update-interval"] || 0.5,
     labels: {
       portal: inConfig["labels"]?.portal ?? "Portal to ",
+      station: inConfig["labels"]?.station ?? "Station",
+      assembling: inConfig["labels"]?.assembling ?? "Assembling",
+      train: inConfig["labels"]?.train ?? "Train",
+      owner: inConfig["labels"]?.owner ?? "Owner",
     },
   };
 
