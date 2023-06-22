@@ -1,6 +1,6 @@
 import { TrainPortal } from "../types/APITypes";
 import { Renderer } from "../types/Renderer";
-import { Vector } from "../utils";
+import { Vector, getMapForDimension } from "../utils";
 
 export class PortalRenderer extends Renderer<TrainPortal, L.ImageOverlay> {
   render(portal: TrainPortal) {
@@ -14,17 +14,13 @@ export class PortalRenderer extends Renderer<TrainPortal, L.ImageOverlay> {
       interactive: true,
     });
 
-    const targetName = Object.entries(this.config.worlds).find(([_, v]) => v == portal.to.dimension)?.[0];
-    const target = targetName ? this.dynmap.worlds[targetName] : null;
+    const target = getMapForDimension(portal.to.dimension, this.dynmap, this.config);
 
-    img.bindTooltip(this.config.labels.portal + target?.title ?? portal.to.dimension, {});
+    img.bindTooltip(this.config.labels.portal + target?.options.world.title ?? portal.to.dimension, {});
 
     if (target) {
       img.on("click", () => {
-        this.dynmap.selectMapAndPan(
-          target.maps[this.dynmap.maptype.options.name] ?? target.maps[Object.keys(target.maps)[0]],
-          portal.to.location
-        );
+        this.dynmap.selectMapAndPan(target, portal.to.location);
       });
     }
 

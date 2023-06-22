@@ -9,7 +9,7 @@ import {
 } from "./types/APITypes";
 import { Renderer } from "./types/Renderer";
 import { Stream } from "./Stream";
-import { Unarray } from "./utils";
+import { Unarray, getMapForDimension } from "./utils";
 import { TrackBlockRenderer } from "./renderers/TrackBlockRenderer";
 import { TrainRenderer } from "./renderers/TrainRenderer";
 import { SignalRenderer } from "./renderers/SignalRenderer";
@@ -100,6 +100,34 @@ export class RenderManager {
     // Update on zoom
     $(dynmap).on("zoomchanged", () => {
       this.update();
+    });
+
+    // Create sidebar lists
+    const trainSection = SidebarUtils.createListSection(config.layers.trains.label);
+    trainSection.section.appendTo(dynmap.sidebarPanel);
+    dynmap.sidebarSections.push(trainSection);
+    const trainList = trainSection.content as HTMLElement;
+    $(trainList).addClass("playerlist");
+
+    this.#streams.trains.onMessage((data) => {
+      for (const train of data.trains) {
+        const position = train.cars[0].leading;
+        const map = getMapForDimension(position.dimension, dynmap, config);
+
+        let $el = $("#train-" + train.id);
+        if (!$el.length) {
+          $el = $("<li>")
+            .attr("id", "train-" + train.id)
+            .addClass("player")
+            .append($("<a>").attr("href", "#").text(train.name))
+            .appendTo(trainList);
+        }
+        $el.off();
+        $el.on("click", () => {
+          if (dynmap.world.name == map?.options.world.name) dynmap.panToLocation(position.location);
+          else dynmap.selectMapAndPan(map, position.location);
+        });
+      }
     });
   }
 
