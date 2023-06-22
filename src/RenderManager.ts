@@ -14,6 +14,7 @@ import { TrackBlockRenderer } from "./renderers/TrackBlockRenderer";
 import { TrainRenderer } from "./renderers/TrainRenderer";
 import { SignalRenderer } from "./renderers/SignalRenderer";
 import { PortalRenderer } from "./renderers/PortalRenderer";
+import { StationRenderer } from "./renderers/StationRenderer";
 
 export class RenderManager {
   #streams: {
@@ -61,9 +62,9 @@ export class RenderManager {
     };
 
     // Create renderers
-    //@ts-ignore TODO
     this.#renderers = {
       signals: new SignalRenderer(dynmap, config),
+      stations: new StationRenderer(dynmap, config),
       blocks: new TrackBlockRenderer(dynmap, config),
       trains: new TrainRenderer(dynmap, config),
       portals: new PortalRenderer(dynmap, config),
@@ -124,6 +125,9 @@ export class RenderManager {
       if (!layerObj) {
         // Render layer if it doesn't exist
         layerObj = renderer.render(object);
+
+        if (!layerObj) continue; // Renderer decided not to render this object
+
         layer.addLayer(layerObj);
         this.#objects[type].set(id, layerObj);
       }

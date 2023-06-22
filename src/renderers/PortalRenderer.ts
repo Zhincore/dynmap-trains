@@ -4,9 +4,7 @@ import { Vector } from "../utils";
 
 export class PortalRenderer extends Renderer<TrainPortal, L.ImageOverlay> {
   render(portal: TrainPortal) {
-    if (portal.from.dimension != this.config.worlds[this.dynmap.world.name]) {
-      return L.layerGroup() as unknown as L.ImageOverlay;
-    }
+    if (portal.from.dimension != this.config.worlds[this.dynmap.world.name]) return;
 
     const position = new Vector(portal.from.location).toLatLng(this.dynmap);
 

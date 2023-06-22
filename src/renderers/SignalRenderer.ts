@@ -9,8 +9,9 @@ const SIGNAL_DIRECTIONS = ["forward", "reverse"] as const;
 
 export class SignalRenderer extends Renderer<TrainSignalPair, NamedLayerGroup<L.SVGOverlay>> {
   render(signalPair: TrainSignalPair) {
+    if (signalPair.dimension != this.config.worlds[this.dynmap.world.name]) return;
+
     const group = new NamedLayerGroup<L.SVGOverlay>();
-    if (signalPair.dimension != this.config.worlds[this.dynmap.world.name]) return group;
 
     for (const direction of SIGNAL_DIRECTIONS) {
       const signal = signalPair[direction];
@@ -34,21 +35,6 @@ export class SignalRenderer extends Renderer<TrainSignalPair, NamedLayerGroup<L.
       `;
 
       const layer = L.svgOverlay(svgElement, position.toLatLng(this.dynmap).toBounds(SIGNAL_SCALE * 10000));
-
-      // const layer = new L.LayerGroup([
-      //   L.circle(this.ll(position), {
-      //     radius: SIGNAL_RADIUS / BLOCK_SCALE / 2,
-      //     weight: 2,
-      //     fillOpacity: 1,
-      //     color: "black",
-      //   }),
-      //   L.polyline(
-      //     [underlinePos1, underlinePos2].map((v) => this.ll(addPoints(position, v))),
-      //     {
-      //       color: "black",
-      //     }
-      //   ),
-      // ]);
 
       group.addLayer(direction, layer);
     }

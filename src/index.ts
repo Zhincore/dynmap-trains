@@ -72,6 +72,6 @@ componentconstructors["trains"] = function (dynmap: DynMap, inConfig: InputConfi
     layer.on("remove", onRemove);
 
     if (!layerConf.hidden) dynmap.map.addLayer(layer);
-    dynmap.addToLayerSelector(layer, layerConf.label, i + 1);
+    dynmap.addToLayerSelector(layer, layerConf.label, 1);
   }
 };

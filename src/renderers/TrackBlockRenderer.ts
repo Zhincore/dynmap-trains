@@ -36,7 +36,7 @@ export class TrackBlockRenderer extends Renderer<TrackBlock, L.LayerGroup<L.Path
     }
 
     // Don't render lines if empty
-    if (!commands.length) return new L.LayerGroup();
+    if (!commands.length) return;
 
     // Create the lines and return
     return new L.LayerGroup([
