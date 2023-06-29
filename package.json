@@ -4,8 +4,7 @@
   "type": "module",
   "scripts": {
     "lint": "eslint --fix src",
-    "build": "esbuild --bundle --format=iife --external:leaflet --external:jquery --outfile=./build/trains.js ./src/index.ts",
-    "generate-types": "tsc -p tsconfig.dynmap.json"
+    "build": "esbuild --bundle --format=iife --external:leaflet --external:jquery --outfile=./build/trains.js ./src/index.ts"
   },
   "devDependencies": {
     "@elfalem/leaflet-curve": "^0.9.2",

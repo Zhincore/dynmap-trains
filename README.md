@@ -16,13 +16,14 @@ Dynmap integration for [Create Track Map](https://modrinth.com/mod/create-track-
 
 ## Installation
 
-1. Drop `trains.js` into `<your server path>/dynmap/web/js/`.
-2. Add these lines in `dynmap/configuration.txt` under the `components:` section:
+1. Download [`trains.js`](https://github.com/Zhincore/dynmap-trains/releases/latest/download/trains.js) from the [GitHub releases page](https://github.com/Zhincore/dynmap-trains/releases/latest).
+2. Drop the `trains.js` into `<your server path>/dynmap/web/js/`.
+3. Add these lines in `dynmap/configuration.txt` under the `components:` section:
     ```yaml
     - class: org.dynmap.ClientComponent
       type: trains
     ```
-3. Restart the server and done! But you should probably [configure it](#configuration) first.
+4. Restart the server and done! But you should probably [configure it](#configuration) first.
 
 ## Configuration
 
@@ -83,3 +84,15 @@ components:
     # Whether or not should the track outline visually separate track segments 
     trackSeparationOutline: true
 ```
+
+
+## Development
+
+Follow these steps to build the project yourself (you need PNPM for that):
+
+1. Run `pnpm i` to install the dependencies
+2. Run `pnpm build` to transpile all the TypeScript files into a single file `build/trains.js`.
+
+You can run `pnpm build --watch` to automatically rebuild the file on changes.
+
+In my testing server I have a symbolic link in `dynmap/web/js/` that points to the `build/trains.js`.
