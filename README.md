@@ -2,6 +2,8 @@
 
 Dynmap integration for [Create Track Map](https://modrinth.com/mod/create-track-map).
 
+![](train.webp)
+
 ## Features
 
 - Same as CTM's frontend; near-realtime updates, configurable colors, etc.
