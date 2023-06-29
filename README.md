@@ -26,9 +26,60 @@ Dynmap integration for [Create Track Map](https://modrinth.com/mod/create-track-
 
 ## Configuration
 
-// TODO
+In addition to the CTM's configuration file, you can configure the appearence and behaviour of this script on DynMap.
 
-## TODO
+Bellow is an example snippet from DynMap's `configuration.txt` with all available options and their default values. 
+You can specify just the options you want to change and the rest will keep their default.
 
-[ ] **Optimise updates** - Don't re-render everything on every change
-[ ] **Document stuff**
+```yaml
+components:
+  - class: org.dynmap.ClientComponent
+    type: trains
+    # Base url of CTM server. "" will try the current address, e.g. `localhost:8123/api/trains`, you can make this work using Nginx or similar.
+    # The default address of CTM is `http://localhost:3876` (which won't work on the internet, just saying)
+    baseUrl: ""
+    # Dynmap world name to CTM world name mapping 
+    worlds:
+      world: "minecraft:overworld"
+      DIM-1: "minecraft:the_nether"
+      DIM1:  "minecraft:the_end"
+    # Configuration for each layer
+    #   `hidden` - Whether or not should the layer be hidden by default
+    #   `label` - The label of the layer to show in the UI
+    layers: 
+      trains:
+        hidden: false
+        label: Trains
+      blocks:
+        hidden: false
+        label: Train Tracks
+      signals:
+        hidden: false
+        label: Train Signals
+      stations:
+        hidden: false
+        label: Train Stations
+      portals:
+        hidden: false
+        label: Train Portals
+    # Additional texts used in the UI 
+    labels: 
+      # Tooltip for portal marker 
+      portal: "Portal to "
+      # Tooltip for station marker 
+      station: Station
+      # Tooltip whether the station is assembling 
+      assembling: Assembling
+      # Tooltip for train marker 
+      train: Train
+      # Owner of train 
+      owner: Owner
+    # Width of the rectangles representing trains (in blocks) 
+    trainWidth: 3
+    # Width of the lines representing tracks 
+    trackWidth: 0.75
+    # Width of the outline around the track lines 
+    trackOutline: 1
+    # Whether or not should the track outline visually separate track segments 
+    trackSeparationOutline: true
+```
