@@ -92,7 +92,7 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
         if (train.backwards && i == train.cars.length - 1) {
           points.splice(3, 0, trailing.add(vector.toFlipped().multiply(this.config.trainWidth)));
           isLead = true;
-        } else if (i == 0) {
+        } else if (!train.backwards && i == 0) {
           points.splice(1, 0, leading.add(vector.multiply(this.config.trainWidth)));
           isLead = true;
         }
