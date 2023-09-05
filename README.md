@@ -24,7 +24,7 @@ Dynmap integration for [Create Track Map](https://modrinth.com/mod/create-track-
     ```yaml
     - class: org.dynmap.ClientComponent
       type: trains
-      baseUrl: "https://trains.example.com"
+      base-url: "https://trains.example.com"
     ```
 4. Restart the server and done! But you should probably [configure it](#configuration) first.
 
@@ -44,7 +44,7 @@ components:
     # Base url of CTM server. "" will try the current address (which is for example `localhost:8123/api/trains`), you can make this work using a reverse proxy (like Nginx).
     # If specified, it should be a publicly available address.
     # The default address of CTM is `http://localhost:3876` (which will NOT work on the internet, just saying)
-    baseUrl: ""
+    base-url: ""
     # Dynmap world name to CTM world name mapping 
     worlds:
       world: "minecraft:overworld"
@@ -82,13 +82,13 @@ components:
       # Owner of train 
       owner: Owner
     # Width of the rectangles representing trains (in blocks) 
-    trainWidth: 3
+    train-width: 3
     # Width of the lines representing tracks 
-    trackWidth: 0.75
+    track-width: 0.75
     # Width of the outline around the track lines 
-    trackOutline: 1
+    track-outline: 1
     # Whether or not should the track outline visually separate track segments 
-    trackSeparationOutline: true
+    track-separation-outline: true
 ```
 
 
