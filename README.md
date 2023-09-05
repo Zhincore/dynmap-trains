@@ -24,6 +24,7 @@ Dynmap integration for [Create Track Map](https://modrinth.com/mod/create-track-
     ```yaml
     - class: org.dynmap.ClientComponent
       type: trains
+      baseUrl: "https://trains.example.com"
     ```
 4. Restart the server and done! But you should probably [configure it](#configuration) first.
 
@@ -34,12 +35,15 @@ In addition to the CTM's configuration file, you can configure the appearence an
 Bellow is an example snippet from DynMap's `configuration.txt` with all available options and their default values. 
 You can specify just the options you want to change and the rest will keep their default.
 
+Usually you only need to set `baseUrl`. It should be the URL under which your CTM is available from outside, since this addon works in browser, it cannot be `localhost`. 
+
 ```yaml
 components:
   - class: org.dynmap.ClientComponent
     type: trains
-    # Base url of CTM server. "" will try the current address, e.g. `localhost:8123/api/trains`, you can make this work using Nginx or similar.
-    # The default address of CTM is `http://localhost:3876` (which won't work on the internet, just saying)
+    # Base url of CTM server. "" will try the current address (which is for example `localhost:8123/api/trains`), you can make this work using a reverse proxy (like Nginx).
+    # If specified, it should be a publicly available address.
+    # The default address of CTM is `http://localhost:3876` (which will NOT work on the internet, just saying)
     baseUrl: ""
     # Dynmap world name to CTM world name mapping 
     worlds:
