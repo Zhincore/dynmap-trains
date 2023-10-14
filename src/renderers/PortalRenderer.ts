@@ -16,7 +16,7 @@ export class PortalRenderer extends Renderer<TrainPortal, L.ImageOverlay> {
 
     const target = getMapForDimension(portal.to.dimension, this.dynmap, this.config);
 
-    img.bindTooltip(this.config.labels.portal + target?.options.world.title ?? portal.to.dimension, {});
+    img.bindTooltip(this.config.labels.portal + (target?.options.world.title ?? portal.to.dimension), {});
 
     if (target) {
       img.on("click", () => {

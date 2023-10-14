@@ -16,6 +16,8 @@ import { SignalRenderer } from "./renderers/SignalRenderer";
 import { PortalRenderer } from "./renderers/PortalRenderer";
 import { StationRenderer } from "./renderers/StationRenderer";
 
+const BATCH_SIZE = 256;
+
 export class RenderManager {
   #streams: {
     network: Stream<NetworkAPIResponse>;
@@ -46,6 +48,14 @@ export class RenderManager {
     stations: [],
     trains: [],
     portals: [],
+  };
+
+  #timeouts: { [Key in APILayers]: number | undefined } = {
+    blocks: undefined,
+    signals: undefined,
+    stations: undefined,
+    trains: undefined,
+    portals: undefined,
   };
 
   #renderers: { [Key in APILayers]: Renderer<Unarray<APIObjects[Key]>> };
@@ -144,25 +154,42 @@ export class RenderManager {
     const layer = this.#layers[type];
     const cache = this.#cache[type];
 
-    for (let i = 0; i < cache.length; i++) {
-      const object = cache[i] as Unarray<APIObjects[T]>;
-      const id = "id" in object ? object.id : i + "";
+    const queue = [...cache];
 
-      let layerObj = this.#objects[type].get(id);
+    if (this.#timeouts[type]) {
+      clearTimeout(this.#timeouts[type]);
+    }
 
-      if (!layerObj) {
-        // Render layer if it doesn't exist
-        layerObj = renderer.render(object);
+    const processBatch = () => {
+      for (let i = 0; i < Math.min(BATCH_SIZE, queue.length); i++) {
+        const object = queue.shift() as Unarray<APIObjects[T]>;
+        if (!object) break;
+        const id = "id" in object ? object.id : i + "";
 
-        if (!layerObj) continue; // Renderer decided not to render this object
+        let layerObj = this.#objects[type].get(id);
 
-        layer.addLayer(layerObj);
-        this.#objects[type].set(id, layerObj);
+        if (!layerObj) {
+          // Render layer if it doesn't exist
+          layerObj = renderer.render(object);
+
+          if (!layerObj) continue; // Renderer decided not to render this object
+
+          layer.addLayer(layerObj);
+          this.#objects[type].set(id, layerObj);
+        }
+
+        // Update it either way
+        renderer.update(object, layerObj);
       }
 
-      // Update it either way
-      renderer.update(object, layerObj);
-    }
+      if (queue.length) {
+        this.#timeouts[type] = setTimeout(processBatch);
+      } else {
+        this.#timeouts[type] = undefined;
+      }
+    };
+
+    processBatch();
   }
 
   /** Update all layers  */
@@ -199,6 +226,6 @@ export class RenderManager {
 
   /** Disconnect all streams */
   disconnect() {
-    Object.values(this.#streams).map((v) => v.disconnect());
+    Object.values(this.#streams).forEach((v) => v.disconnect());
   }
 }

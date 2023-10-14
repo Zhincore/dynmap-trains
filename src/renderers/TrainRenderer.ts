@@ -43,8 +43,8 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
       const car = train.cars[i];
 
       if (
-        car.leading.dimension != this.config.worlds[this.dynmap.world.name] ||
-        car.trailing.dimension != this.config.worlds[this.dynmap.world.name]
+        car.leading?.dimension != this.config.worlds[this.dynmap.world.name] ||
+        car.trailing?.dimension != this.config.worlds[this.dynmap.world.name]
       )
         continue;
 

@@ -24,7 +24,7 @@ export class Stream<T extends APIResponse = APIResponse> {
         return true;
       };
       const _resolve = () => _end() && resolve();
-      const _reject = () => _end() && reject();
+      const _reject = (e: unknown) => _end() && reject(e);
 
       this.#events?.addEventListener("open", _resolve, { once: true });
       this.#events?.addEventListener("error", _reject, { once: true });
