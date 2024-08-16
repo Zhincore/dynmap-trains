@@ -14,11 +14,11 @@ export class TrackBlockRenderer extends Renderer<TrackBlock, L.LayerGroup<L.Path
     for (const segment of block.segments) {
       const points = segment.path.map((v) => new Vector(v));
 
-      // Don't render trakcs in other dimension
+      // Don't render tracks in other dimension
       if (segment.dimension != this.config.worlds[this.dynmap.world.name]) continue;
 
       // Reuse last point if it matches
-      if (!lastPoint || !lastPoint.equals(points[0])) {
+      if (!lastPoint?.equals(points[0])) {
         // Move "pencil"
         commands.push("M", ll(points[0]));
       }

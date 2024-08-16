@@ -79,7 +79,7 @@ export class Vector implements TrainPoint {
   }
 
   /** Return a new vector thats result of substracting given vector/scalar from this vector */
-  substract(vector: VectorInit) {
+  subtract(vector: VectorInit) {
     const _vector = this.#coerce(vector);
     return new Vector(this.x - _vector.x, this.y - _vector.y, this.z - _vector.z);
   }
@@ -122,7 +122,7 @@ export class Vector implements TrainPoint {
   }
 
   /** Make this into a unit vector. Modifies IN PLACE and returns the same vector */
-  normalise() {
+  normalize() {
     const length = this.getLength();
 
     this.x /= length;

@@ -50,7 +50,7 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
 
       // This element is used for displaying animated train
       let viewPath = innerG.childNodes[i * 2] as SVGPathElement;
-      // This element is used to properly calulate the bounding box
+      // This element is used to properly calculate the bounding box
       let calcPath = innerG.childNodes[i * 2 + 1] as SVGPathElement;
       // If the car wasn't rendered yet, create the elements
       if (!viewPath) {
@@ -68,7 +68,7 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
       const trailing = new Vector(car.trailing.location);
 
       // Create a delta vector
-      const vector = leading.substract(trailing).normalise();
+      const vector = leading.subtract(trailing).normalize();
 
       // Create an in-direction offset
       const offset = vector.multiply(0.5);
@@ -105,7 +105,7 @@ export class TrainRenderer extends Renderer<Train, L.SVGOverlay> {
       // Update the shape
       const d = points
         .map((v, i) => {
-          // Apply offfset and convert to latLan
+          // Apply offset and convert to latLan
           const _v = v.add(TRAIN_OFFSET).toLatLng(this.dynmap);
           return `${i ? "L" : "M"} ${_v.lat},${_v.lng}`;
         })

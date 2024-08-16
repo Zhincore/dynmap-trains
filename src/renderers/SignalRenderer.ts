@@ -19,7 +19,7 @@ export class SignalRenderer extends Renderer<TrainSignalPair, NamedLayerGroup<L.
       const vector = new Vector(1, 0, 0).rotate(-signal.angle);
 
       // Calculate offset vector from the tracks
-      const offset = vector.multiply(2).substract(vector.toPerpendicular());
+      const offset = vector.multiply(2).subtract(vector.toPerpendicular());
 
       // Calculate the final position
       const position = new Vector(signalPair.location).add(offset);
@@ -27,7 +27,7 @@ export class SignalRenderer extends Renderer<TrainSignalPair, NamedLayerGroup<L.
       // Calculate the angle for 3D view
       const location = new Vector(new Vector(signalPair.location).toLatLng(this.dynmap));
       const offsettedLoc = new Vector(new Vector(signalPair.location).add(vector).toLatLng(this.dynmap));
-      const angle3d = offsettedLoc.substract(location).getAngle();
+      const angle3d = offsettedLoc.subtract(location).getAngle();
 
       // Create the image
       const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
