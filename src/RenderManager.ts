@@ -16,6 +16,13 @@ import { SignalRenderer } from "./renderers/SignalRenderer";
 import { PortalRenderer } from "./renderers/PortalRenderer";
 import { StationRenderer } from "./renderers/StationRenderer";
 
+interface DynMapLocation {
+  world?: string;
+  x: number;
+  y: number;
+  z: number;
+}
+
 export class RenderManager {
   #streams: {
     network: Stream<NetworkAPIResponse>;
@@ -112,7 +119,12 @@ export class RenderManager {
     this.#streams.trains.onMessage((data) => {
       for (const train of data.trains) {
         const position = train.cars[0].leading;
+        const trainLocation: DynMapLocation = { ...position.location };
         const map = getMapForDimension(position.dimension, dynmap, config);
+
+        if (map?.options.world.name) {
+          trainLocation.world = map.options.world.name;
+        }
 
         let $el = $("#train-" + train.id);
         if (!$el.length) {
@@ -124,8 +136,8 @@ export class RenderManager {
         }
         $el.off();
         $el.on("click", () => {
-          if (dynmap.world.name == map?.options.world.name) dynmap.panToLocation(position.location);
-          else dynmap.selectMapAndPan(map, position.location);
+          if (dynmap.world.name == map?.options.world.name) dynmap.panToLocation(trainLocation);
+          else dynmap.selectMapAndPan(map, trainLocation);
         });
       }
     });
